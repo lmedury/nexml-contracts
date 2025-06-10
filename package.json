@@ -1,0 +1,15 @@
+{
+  "name": "nexml-blockchain-contracts",
+  "version": "0.0.1",
+  "description": "Hardhat project for NexML contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.24.2"
+  }
+}

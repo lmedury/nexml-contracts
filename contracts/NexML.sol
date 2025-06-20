@@ -45,6 +45,7 @@ contract NexMLMarketplace is AccessControl, ReentrancyGuard {
     mapping(address => User) public users; 
     mapping(address => bytes32[]) public modelsByUser;
     mapping(bytes32 => address[]) public modelsRented;
+    mapping(bytes32 => mapping(address => bool)) public hasReviewed; // Tracks if an address has reviewed a model
 
     EnumerableSet.Bytes32Set private modelIds; // Set of all model IDs
 
@@ -99,7 +100,7 @@ contract NexMLMarketplace is AccessControl, ReentrancyGuard {
         bool forRent,
         bool forSale,
         uint256 rentPrice,
-        uint256 salePrice) external isModelOwner(modelId) {
+        uint256 salePrice) external modelExists(modelId) isModelOwner(modelId) {
             models[modelId].ipfsHash = ipfsHash;
             models[modelId].forRent = forRent; 
             models[modelId].forSale = forSale; 
@@ -133,6 +134,7 @@ contract NexMLMarketplace is AccessControl, ReentrancyGuard {
     // Rate a model
     function rateModel(bytes32 modelId, uint256 rating, string memory comment) external modelExists(modelId) {
         require(rating > 0 && rating <= 5, "Rating must be between 1 and 5");
+        require(!hasReviewed[modelId][msg.sender], "You have already reviewed this model");
 
         Model storage model = models[modelId];
         model.ratingSum += rating;
@@ -143,7 +145,7 @@ contract NexMLMarketplace is AccessControl, ReentrancyGuard {
             rating: rating,
             comment: comment
         }));
-
+        hasReviewed[modelId][msg.sender] = true; // Mark this address as having reviewed the model
         emit ModelRated(modelId, msg.sender, rating, comment);
     }
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract NexMLMarketplace is AccessControl, ReentrancyGuard {
@@ -79,8 +79,12 @@ contract NexMLMarketplace is AccessControl, ReentrancyGuard {
         models[modelId].salePrice = salePrice; 
         models[modelId].rentPrice = rentPrice;
         
-        if (!forRent && !forSale){
+        if (forSale){
             require(salePrice > 0, "Sale price is required");
+        }
+
+        if (forRent){
+            require(rentPrice > 0, "Rent price is required");
         }
 
         modelIds.add(modelId);
